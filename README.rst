@@ -28,6 +28,7 @@ In an IPython session:
 
 ::
 
+    %load_ext slackcast
     %slackcast @user
     %slackcast #channel
     %slackcast off
