@@ -81,8 +81,10 @@ class SlackCaster():
     )
 
     def _format_cell(self, cell):
-        cell = ansi_escape.sub('', cell)
-        return html.escape(f"```{cell}```", quote=False)
+        if type(cell) == str:
+            if len(cell) > 0:
+                cell = ansi_escape.sub('', cell)
+                return html.escape(f"```{cell}```", quote=False)
 
     def _send(self, contents):
         self.sc.api_call('chat.postMessage',
