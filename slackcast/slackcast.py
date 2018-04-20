@@ -5,12 +5,13 @@
 import os
 import keyring
 import re
+import sys
 
 from IPython.core.magic import register_line_magic
 from IPython.core.events import EventManager
 from prompt_toolkit import prompt
 
-from .caster import SlackCaster
+from .caster import SlackCaster, SlackcastException
 
 __all__ = [
     'load_ipython_extension',
@@ -52,8 +53,11 @@ def slackcast(line):
     channel = line
 
     if channel == 'off':
-        res = CASTER.set_channel(None)
+        CASTER.set_channel(None)
+        sys.stderr.write('Slackcast deactivated.\n')
     else:
-        res = CASTER.set_channel(channel)
-
-    print(res)
+        try:
+            CASTER.set_channel(channel)
+            sys.stderr.write(f'Slackcast transmitting on {channel}\n')
+        except SlackcastException:
+            sys.stderr.write(f'Could not find {channel}.\n')

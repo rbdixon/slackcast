@@ -14,6 +14,7 @@ __all__ = ['SlackCaster']
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 class SlackAPIException(Exception): pass
+class SlackcastException(Exception): pass
 
 @attr.s
 class SlackCaster():
@@ -102,12 +103,16 @@ class SlackCaster():
         if cell_input is not None:
             self._send(cell_input)
 
-        if len(cell_output) > 0:
-            self._send(cell_output)
+        if cell_output is not None:
+            if len(cell_output) > 0:
+                self._send(cell_output)
 
     def pre_run_cell(self, info):
-        self.cell_input = info.raw_cell
-        self._capture_on()
+        if not info.raw_cell.startswith('%slackcast'):
+            self.cell_input = info.raw_cell
+            self._capture_on()
+        else:
+            self.cell_input = None
 
     def post_run_cell(self, result):
         cell_output = self._capture_off()
@@ -123,7 +128,7 @@ class SlackCaster():
         # Go silent
         if channel is None:
             self.channel = None
-            return f'Slackcaster deactivated.'
+            return
 
         chan_type = channel[0]
         name = channel[1:]
@@ -134,8 +139,7 @@ class SlackCaster():
         if chan_type == '@':
             channel_id = self._get_user_id(value=name)
 
-        if channel_id is not None:
-            self.channel = channel_id
-            return f'Slackcaster transmitting on {channel}'
+        if channel_id is None:
+            raise SlackcastException('Could not set channel to {channel}.')
         else:
-            return f'Could not find {channel}.'
+            self.channel = channel_id
