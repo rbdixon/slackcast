@@ -19,7 +19,7 @@ Get a Slack bot token.
 
 ::
 
-    export SLACK_BOT_TOKEN=<token>
+    export SLACKCAST_INSTALL_URL=https://...
 
 Usage
 -----

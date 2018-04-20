@@ -15,6 +15,8 @@ requirements = [
     'slackclient',
     'ipython',
     'attrs',
+    'prompt_toolkit',
+    'keyring',
 ]
 
 setup_requirements = ['pytest-runner', ]
