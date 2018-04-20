@@ -13,11 +13,13 @@ __all__ = ['SlackCaster']
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
+class SlackAPIException(Exception): pass
+
 @attr.s
 class SlackCaster():
 
-    shell = attr.ib()
-    token = attr.ib()
+    shell = attr.ib(repr=False)
+    token = attr.ib(repr=False)
 
     def __attrs_post_init__(self):
         self.orig_stdout = None
@@ -81,16 +83,18 @@ class SlackCaster():
     )
 
     def _format_cell(self, cell):
-        if type(cell) == str:
-            if len(cell) > 0:
-                cell = ansi_escape.sub('', cell)
-                return html.escape(f"```{cell}```", quote=False)
+        cell = ansi_escape.sub('', cell)
+        return html.escape(f"```{cell}```", quote=False)
 
     def _send(self, contents):
-        self.sc.api_call('chat.postMessage',
+        res = self.sc.api_call('chat.postMessage',
             channel=self.channel,
             text=self._format_cell(contents),
+            as_user=True,
         )
+
+        if not res['ok']:
+            raise SlackAPIException(res)
 
     def _send_cell(self, cell_input=None, cell_output=None):
         if self.channel is None: return
@@ -98,7 +102,7 @@ class SlackCaster():
         if cell_input is not None:
             self._send(cell_input)
 
-        if cell_output is not None:
+        if len(cell_output) > 0:
             self._send(cell_output)
 
     def pre_run_cell(self, info):
