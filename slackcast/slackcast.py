@@ -17,7 +17,7 @@ __all__ = [
     'load_ipython_extension',
 ]
 
-SLACKCAST_INSTALL_URL = os.environ['SLACKCAST_INSTALL_URL']
+SLACKCAST_INSTALL_URL = os.environ.get('SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/prod/install')
 KEY = ('slackcast', 'token')
 CASTER = None
 
@@ -51,6 +51,10 @@ def slackcast(line):
     global CASTER
 
     channel = line
+
+    # TODO: Add immediate mode
+    # - `%slackcast @brad test`: Send "test" to @brad
+    # - `%slackcast @brad _`: Send last cell and output to @brad
 
     if channel == 'off':
         CASTER.set_channel(None)
