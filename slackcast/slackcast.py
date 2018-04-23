@@ -17,7 +17,7 @@ __all__ = [
     'load_ipython_extension',
 ]
 
-SLACKCAST_INSTALL_URL = os.environ.get('SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/prod/install')
+SLACKCAST_INSTALL_URL = os.environ.get('SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/install')
 KEY = ('slackcast', 'token')
 CASTER = None
 

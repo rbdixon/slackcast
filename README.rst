@@ -12,15 +12,6 @@ Add this package to wherever IPython is loading from:
 
     pip install git+https://github.com/rbdixon/slackcaster.git
 
-Setup
------
-
-Get a Slack bot token.
-
-::
-
-    export SLACKCAST_INSTALL_URL=https://...
-
 Usage
 -----
 
