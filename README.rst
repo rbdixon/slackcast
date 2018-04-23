@@ -10,7 +10,7 @@ Add this package to wherever IPython is loading from:
 
 ::
 
-    pip install git+https://github.com/rbdixon/slackcaster.git
+    pip install git+https://github.com/rbdixon/slackcast.git
 
 Usage
 -----
