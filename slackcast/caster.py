@@ -8,6 +8,7 @@ from IPython.utils.capture import capture_output
 from IPython.utils.io import Tee
 from slackclient import SlackClient
 from functools import partialmethod
+from concurrent.futures import ThreadPoolExecutor
 
 __all__ = ['SlackCaster']
 
@@ -27,6 +28,7 @@ class SlackCaster():
         self.sc = SlackClient(self.token)
         self.channel = None
         self.cell_input = None
+        self.tp = ThreadPoolExecutor(1)
 
     def _capture_on(self):
         self.orig_stdout = sys.stdout
@@ -101,11 +103,11 @@ class SlackCaster():
         if self.channel is None: return
 
         if cell_input is not None:
-            self._send(cell_input)
+            self.tp.submit( self._send, cell_input )
 
         if cell_output is not None:
             if len(cell_output) > 0:
-                self._send(cell_output)
+                self.tp.submit( self._send, cell_output )
 
     def pre_run_cell(self, info):
         if not info.raw_cell.startswith('%slackcast'):
