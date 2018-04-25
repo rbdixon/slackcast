@@ -58,6 +58,8 @@ class SlackCaster():
             for item in results[seqname]:
                 if item[filter_key] == value:
                     return item[result_key]
+        else:
+            raise SlackAPIException(res)
 
     _get_channel_id = partialmethod(_call_and_get, 
         cmd='channels.list',
