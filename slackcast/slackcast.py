@@ -35,7 +35,11 @@ def load_ipython_extension(ip):
             print('Could not find or obtain a Slack token.')
 
 def get_token():
-    token = keyring.get_password(*KEY)
+    # For testing
+    token = os.environ.get('SLACKCAST_TOKEN', None)
+
+    if token is None:
+        token = keyring.get_password(*KEY)
 
     if token is None:
         raw_token = prompt(f'Visit {SLACKCAST_INSTALL_URL}, approve, and enter token: ')
