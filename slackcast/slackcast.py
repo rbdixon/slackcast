@@ -12,6 +12,7 @@ from IPython.core.events import EventManager
 from prompt_toolkit import prompt
 
 from .caster import SlackCaster, SlackcastException
+from .parser import command_parser
 
 __all__ = [
     'load_ipython_extension',
@@ -54,18 +55,31 @@ def get_token():
 def slackcast(line):
     global CASTER
 
-    channel = line
+    cmd_str = line
 
-    # TODO: Add immediate mode
-    # - `%slackcast @brad test`: Send "test" to @brad
-    # - `%slackcast @brad _`: Send last cell and output to @brad
+    try:
+        cmd = command_parser.parseString(cmd_str)
+    except pyparsing.Exception:
+        sys.stderr.write('slackcast did not understand the command "{cmd_str}"\n')
+        return
 
-    if channel == 'off':
+    operation = cmd[0]
+    history = cmd[1:] if len(cmd) > 1 else None
+
+    if operation == 'off':
         CASTER.set_channel(None)
         sys.stderr.write('Slackcast deactivated.\n')
-    else:
+    elif history is None:
+        # Join a channel
+        channel = operation
+
         try:
             CASTER.set_channel(channel)
             sys.stderr.write(f'Slackcast transmitting on {channel}\n')
         except SlackcastException:
             sys.stderr.write(f'Could not find {channel}.\n')
+            return
+    else:
+        # Replay cells to channel
+        channel = operation
+        CASTER.replay(channel, history)

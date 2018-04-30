@@ -23,3 +23,5 @@ In an IPython session:
     %slackcast @user
     %slackcast #channel
     %slackcast off
+    %slackcast #channel 1
+    %slackcast #channel 1-2

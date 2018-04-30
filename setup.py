@@ -16,6 +16,7 @@ requirements = [
     'ipython',
     'attrs',
     'prompt_toolkit',
+    'pyparsing',
     'keyring',
 ]
 

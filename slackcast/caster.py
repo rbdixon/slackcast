@@ -29,6 +29,7 @@ class SlackCaster():
         self.channel = None
         self.cell_input = None
         self.tp = ThreadPoolExecutor(1)
+        self.history = {}
 
     def _capture_on(self):
         self.orig_stdout = sys.stdout
@@ -89,9 +90,9 @@ class SlackCaster():
         cell = ansi_escape.sub('', cell)
         return html.escape(f"```{cell}```", quote=False)
 
-    def _send(self, contents):
+    def _send(self, channel, contents):
         res = self.sc.api_call('chat.postMessage',
-            channel=self.channel,
+            channel=channel,
             text=self._format_cell(contents),
             as_user=True,
         )
@@ -103,11 +104,11 @@ class SlackCaster():
         if self.channel is None: return
 
         if cell_input is not None:
-            self.tp.submit( self._send, cell_input )
+            self.tp.submit( self._send, self.channel, cell_input )
 
         if cell_output is not None:
             if len(cell_output) > 0:
-                self.tp.submit( self._send, cell_output )
+                self.tp.submit( self._send, self.channel, cell_output )
 
     def pre_run_cell(self, info):
         if not info.raw_cell.startswith('%slackcast'):
@@ -115,6 +116,9 @@ class SlackCaster():
             self._capture_on()
         else:
             self.cell_input = None
+
+    def _store_history(self, number, cell_input=None, cell_output=None):
+        self.history[number] = (cell_input, cell_output)
 
     def post_run_cell(self, result):
         cell_output = self._capture_off()
@@ -124,7 +128,18 @@ class SlackCaster():
             sys.stdout.write(cell_output)
 
         # Send input and output cells to slack
+        self._store_history(result.execution_count, self.cell_input, cell_output)
         self._send_cell(self.cell_input, cell_output)
+
+    def replay(self, channel, items):
+        orig_channel = self.channel
+        self.set_channel(channel)
+
+        for idx in items:
+            cell_input, cell_output = self.history[idx]
+            self._send_cell(cell_input, cell_output)
+
+        self.channel = orig_channel
 
     def set_channel(self, channel=None):
         # Go silent

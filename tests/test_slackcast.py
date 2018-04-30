@@ -5,5 +5,18 @@
 
 import pytest
 
-def test_nope():
-    assert True
+from slackcast.parser import command_parser
+
+@pytest.mark.parametrize('cmd,expected', [
+    ['@whomever', ['@whomever'] ],
+    ['#whatever', ['#whatever'] ],
+    ['off', ['off'] ],
+    ['#whatever 1', ['#whatever', 1] ],
+    ['@whomever 1', ['@whomever', 1] ],
+    ['#whatever 1-2', ['#whatever', 1, 2] ],
+    ['@whomever 1-2', ['@whomever', 1, 2] ],
+])
+def test_parse_command(cmd, expected):
+    res = command_parser.parseString(cmd)
+
+    assert list(res) == expected
