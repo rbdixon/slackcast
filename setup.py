@@ -15,7 +15,8 @@ requirements = [
     'slackclient',
     'ipython',
     'attrs',
-    'prompt_toolkit',
+    # Required to avoid conflict with IPython restrictions
+    'prompt_toolkit<=2.0.0',
     'pyparsing',
     'keyring',
 ]
