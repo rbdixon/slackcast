@@ -6,6 +6,7 @@ import os
 import keyring
 import re
 import sys
+import pyparsing
 
 from IPython.core.magic import register_line_magic
 from IPython.core.events import EventManager
@@ -59,8 +60,8 @@ def slackcast(line):
 
     try:
         cmd = command_parser.parseString(cmd_str)
-    except pyparsing.Exception:
-        sys.stderr.write('slackcast did not understand the command "{cmd_str}"\n')
+    except pyparsing.ParseException:
+        sys.stderr.write(f'slackcast did not understand the command "{cmd_str}"\n')
         return
 
     operation = cmd[0]
