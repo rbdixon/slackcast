@@ -1,19 +1,12 @@
 variables:
   GIT_SSL_NO_VERIFY: "true"
 
-test:
+build:
   tags:
     - python3
   script:
     - virtualenv -p python3 env
     - source env/bin/activate
-    - python ./setup.py install
-    - pytest
-
-build:
-  tags:
-    - python3
-  script:
     - python ./setup.py bdist_wheel
   artifacts:
     paths:
