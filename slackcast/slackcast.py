@@ -15,13 +15,14 @@ from prompt_toolkit import prompt
 from .caster import SlackCaster, SlackcastException
 from .parser import command_parser
 
-__all__ = [
-    'load_ipython_extension',
-]
+__all__ = ['load_ipython_extension']
 
-SLACKCAST_INSTALL_URL = os.environ.get('SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/install')
+SLACKCAST_INSTALL_URL = os.environ.get(
+    'SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/install'
+)
 KEY = ('slackcast', 'token')
 CASTER = None
+
 
 def load_ipython_extension(ip):
     global CASTER
@@ -35,6 +36,7 @@ def load_ipython_extension(ip):
             ip.events.register('post_run_cell', CASTER.post_run_cell)
         else:
             print('Could not find or obtain a Slack token.')
+
 
 def get_token():
     # For testing
@@ -51,6 +53,7 @@ def get_token():
             keyring.set_password(*KEY, token)
 
     return token
+
 
 @register_line_magic
 def slackcast(line):

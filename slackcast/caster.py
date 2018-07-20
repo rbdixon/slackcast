@@ -14,11 +14,17 @@ __all__ = ['SlackCaster']
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
-class SlackAPIException(Exception): pass
-class SlackcastException(Exception): pass
+
+class SlackAPIException(Exception):
+    pass
+
+
+class SlackcastException(Exception):
+    pass
+
 
 @attr.s
-class SlackCaster():
+class SlackCaster:
 
     shell = attr.ib(repr=False)
     token = attr.ib(repr=False)
@@ -62,28 +68,31 @@ class SlackCaster():
                 if item[filter_key] == value:
                     return item[result_key]
 
-    _get_channel_id = partialmethod(_call_and_get, 
+    _get_channel_id = partialmethod(
+        _call_and_get,
         cmd='channels.list',
         seqname='channels',
         filter_key='name',
         result_key='id',
-        kwargs={'exclude_archived': 1}
+        kwargs={'exclude_archived': 1},
     )
 
-    _get_im_id = partialmethod(_call_and_get, 
+    _get_im_id = partialmethod(
+        _call_and_get,
         cmd='im.list',
         seqname='ims',
         filter_key='name',
         result_key='id',
-        kwargs={}
+        kwargs={},
     )
 
-    _get_user_id = partialmethod(_call_and_get, 
+    _get_user_id = partialmethod(
+        _call_and_get,
         cmd='users.list',
         seqname='members',
         filter_key='name',
         result_key='id',
-        kwargs={}
+        kwargs={},
     )
 
     def _format_cell(self, cell):
@@ -91,7 +100,8 @@ class SlackCaster():
         return html.escape(f"```{cell}```", quote=False)
 
     def _send(self, channel, contents):
-        res = self.sc.api_call('chat.postMessage',
+        res = self.sc.api_call(
+            'chat.postMessage',
             channel=channel,
             text=self._format_cell(contents),
             as_user=True,
@@ -101,14 +111,15 @@ class SlackCaster():
             raise SlackAPIException(res['error'])
 
     def _send_cell(self, cell_input=None, cell_output=None):
-        if self.channel is None: return
+        if self.channel is None:
+            return
 
         if cell_input is not None:
-            self.tp.submit( self._send, self.channel, cell_input )
+            self.tp.submit(self._send, self.channel, cell_input)
 
         if cell_output is not None:
             if len(cell_output) > 0:
-                self.tp.submit( self._send, self.channel, cell_output )
+                self.tp.submit(self._send, self.channel, cell_output)
 
     def pre_run_cell(self, info):
         if not info.raw_cell.startswith('%slackcast'):
