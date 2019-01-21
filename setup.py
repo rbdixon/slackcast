@@ -13,17 +13,16 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'slackclient',
-    'ipython',
+    'ipython>=7.0.0',
     'attrs',
-    # Required to avoid conflict with IPython restrictions
-    'prompt_toolkit<=2.0.0',
+    'prompt_toolkit',
     'pyparsing',
     'keyring',
 ]
 
-setup_requirements = ['pytest-runner', ]
+setup_requirements = ['pytest-runner']
 
-test_requirements = ['pytest', ]
+test_requirements = ['pytest']
 
 setup(
     author="Brad Dixon",
