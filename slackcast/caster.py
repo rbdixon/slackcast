@@ -27,6 +27,7 @@ class SlackcastException(Exception):
 class SlackCaster:
 
     token = attr.ib(repr=False)
+    as_user = attr.ib(default=True)
 
     def __attrs_post_init__(self):
         self.orig_stdout = None
@@ -103,7 +104,7 @@ class SlackCaster:
             'chat.postMessage',
             channel=channel,
             text=self._format_cell(contents),
-            as_user=True,
+            as_user=self.as_user,
         )
 
         if not res['ok']:

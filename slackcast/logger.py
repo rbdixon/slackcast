@@ -15,13 +15,14 @@ class SlackLogger(logging.Handler):
     channel = attr.ib(converter=str)
     token = attr.ib(default=None, converter=str)
     level = attr.ib(default=logging.INFO, converter=int)
+    as_user = attr.ib(default=True)
 
     def __attrs_post_init__(self):
         super().__init__(level=self.level)
         token = get_token()
 
         assert token is not None, 'Could not load token for Slackcast'
-        self.sc = SlackCaster(token)
+        self.sc = SlackCaster(token, as_user=self.as_user)
         self.sc.set_channel(self.channel)
 
     def emit(self, record):
