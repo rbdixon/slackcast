@@ -14,10 +14,10 @@ If you would like it to be loaded automatically whenever IPython starts add this
 
 ```{.python}
 try:
-    import_module('slackcast')
+    import_module('slackcast.ext')
 except NameError:
-    # Acceptable... this is a workaround
-    c.InteractiveShellApp.extensions = ['slackcast']
+    # Workaround
+    c.InteractiveShellApp.extensions = ['slackcast.ext']
 except ModuleNotFoundError:
     print('-= slackcast is not installed =-')
 ```
@@ -27,9 +27,20 @@ Usage
 
 In an IPython session:
 
-    %load_ext slackcast
+    %load_ext slackcast.ext
     %slackcast @user
     %slackcast #channel
     %slackcast off
     %slackcast #channel 1
     %slackcast #channel 1-2
+
+
+Logger
+------
+
+```.python
+import logging
+
+root_logger = logging.getLogger()
+root_logger.addHandler(SlackLogger(channel='#whatever', level=logging.INFO))
+```

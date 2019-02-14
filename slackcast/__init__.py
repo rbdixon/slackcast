@@ -6,5 +6,5 @@ __author__ = """Brad Dixon"""
 __email__ = 'rbdixon@gmail.com'
 __version__ = '0.4.0'
 
-from .slackcast import *
 from .caster import *
+from .logger import *

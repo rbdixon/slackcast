@@ -2,25 +2,19 @@
 
 """Main module."""
 
-import os
-import keyring
 import re
 import sys
 import pyparsing
 
 from IPython.core.magic import register_line_magic
 from IPython.core.events import EventManager
-from prompt_toolkit import prompt
 
 from .caster import SlackCaster, SlackcastException
 from .parser import command_parser
+from .token import get_token
 
-__all__ = ['load_ipython_extension', 'get_token']
+__all__ = ['load_ipython_extension']
 
-SLACKCAST_INSTALL_URL = os.environ.get(
-    'SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/install'
-)
-KEY = ('slackcast', 'token')
 CASTER = None
 
 
@@ -36,23 +30,6 @@ def load_ipython_extension(ip):
             ip.events.register('post_run_cell', CASTER.post_run_cell)
         else:
             print('Could not find or obtain a Slack token.')
-
-
-def get_token():
-    # For testing
-    token = os.environ.get('SLACKCAST_TOKEN', None)
-
-    if token is None:
-        token = keyring.get_password(*KEY)
-
-    if token is None:
-        raw_token = prompt(f'Visit {SLACKCAST_INSTALL_URL}, approve, and enter token: ')
-
-        if raw_token.startswith('xoxp-'):
-            token = raw_token
-            keyring.set_password(*KEY, token)
-
-    return token
 
 
 @register_line_magic
