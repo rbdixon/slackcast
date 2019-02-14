@@ -15,7 +15,7 @@ from prompt_toolkit import prompt
 from .caster import SlackCaster, SlackcastException
 from .parser import command_parser
 
-__all__ = ['load_ipython_extension']
+__all__ = ['load_ipython_extension', 'get_token']
 
 SLACKCAST_INSTALL_URL = os.environ.get(
     'SLACKCAST_INSTALL_URL', 'https://slackcast.devtestit.com/install'
@@ -31,7 +31,7 @@ def load_ipython_extension(ip):
         token = get_token()
 
         if token is not None:
-            CASTER = SlackCaster(shell=ip, token=token)
+            CASTER = SlackCaster(token=token)
             ip.events.register('pre_run_cell', CASTER.pre_run_cell)
             ip.events.register('post_run_cell', CASTER.post_run_cell)
         else:

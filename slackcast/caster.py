@@ -26,7 +26,6 @@ class SlackcastException(Exception):
 @attr.s
 class SlackCaster:
 
-    shell = attr.ib(repr=False)
     token = attr.ib(repr=False)
 
     def __attrs_post_init__(self):
@@ -171,3 +170,6 @@ class SlackCaster:
             raise SlackcastException('Could not set channel to {channel}.')
         else:
             self.channel = channel_id
+
+    def say(self, line):
+        self._send_cell(line)
