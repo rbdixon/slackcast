@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'slackclient',
+    'slackclient<2.0.0',
     'ipython>=7.0.0',
     'attrs',
     'prompt_toolkit',
